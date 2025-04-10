@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App - Django</title>
+
+    <!-- Bootstrap Cerulean Theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.3/cerulean/bootstrap.min.css"
+        integrity="sha512-dQLT/B7byn2LjN/DN4zeBKpwGV6qbidV0XiMRWQOL7TGrV7FkZFldkGG+DGMU+CQnMTcRZlUI7GMWt1j6akNew=="
+        crossorigin="anonymous" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right,rgb(241, 255, 238), #dbefff);
+            min-height: 100vh;
+        }
+        .jumbotron {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            padding: 2rem 1rem;
+            margin-top: 4rem;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card {
+            border: none;
+            background-color: #ffffff;
+            color: #333;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        .badge-primary {
+            background-color: #0275d8;
+        }
+        footer {
+            margin-top: 4rem;
+            padding: 1rem 0;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a href="../" class="navbar-brand">Weather App <strong style="color: #27a1d1;">- Django</strong></a>
+            <a href="https://openweathermap.org" class="navbar-text text-light ml-auto">OpenWeather API</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="container">
+        <div class="jumbotron text-center mt-5">
+            <h1 class="display-4"> 
+                <img src="http://openweathermap.org/img/w/{{ icon }}.png" alt="Weather Icon" style="width: 150px; height: 150px;">
+                Huraay! Welcome
+            </h1>
+            <p class="lead">Powered by Python & Django Framework</p>
+        </div>
+
+
+        <!-- Search Form -->
+        <form method="post" class="form-inline justify-content-center">
+            {% csrf_token %}
+            <div class="input-group mb-4 w-75">
+                <input type="text" class="form-control" name="city" placeholder="Enter your city..." required>
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Weather Card -->
+        {% if country_code and coordinate and temp and pressure and humidity and description %}
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card p-4 mb-4">
+                    <h4><span class="badge badge-primary">Country Code:</span> {{ country_code }}</h4>
+                    <h4><span class="badge badge-primary">Coordinates [X,Y]:</span> {{ coordinate }}</h4>
+                    <h4><span class="badge badge-primary">Temperature:</span> {{ temp }}</h4>
+                    <h4><span class="badge badge-primary">Pressure:</span> {{ pressure }} hPa</h4>
+                    <h4><span class="badge badge-primary">Humidity:</span> {{ humidity }}%</h4>
+                    <h4>
+                        <span class="badge badge-primary">Forecast:</span> {{ main }}
+                        <img src="http://openweathermap.org/img/w/{{ icon }}.png" alt="Weather Icon" style="width: 50px;">
+                    </h4>
+                    <h4><span class="badge badge-primary">Date:</span> <span id="dynamic-date">{{ date }}</span></h4>
+                    <h4><span class="badge badge-primary">Time:</span> <span id="dynamic-time">{{ time }}</span></h4>
+                    <h4><span class="badge badge-primary">Description:</span> {{ description }}</h4>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <small id="footer-text">&copy; <span id="year"></span> Weather App | Created by Linn Htet Aung | Built with Weather API | <span id="datetime"></span></small>
+        </div>
+    </footer>
+
+    <script>
+        
+        document.addEventListener("DOMContentLoaded", function () {
+        
+            // Update Date dynamically
+            const dateElement = document.getElementById('dynamic-date');
+            const currentDate = new Date().toLocaleDateString();  // Gets the current date
+                  dateElement.textContent = currentDate;
+
+            // Update Time dynamically
+            const timeElement = document.getElementById('dynamic-time');
+            function updateTime() {
+            const currentTime = new Date().toLocaleTimeString();  // Gets the current time
+                  timeElement.textContent = currentTime;
+            }
+                            
+            // Update the time every second
+            setInterval(updateTime, 1000);
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            const date = new Date();
+            document.getElementById("year").textContent = date.getFullYear();
+
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById("datetime").textContent = date.toLocaleDateString('en-US', options);
+        });
+    </script>
+
+</body>
+
+</html>
